@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A Proposal for Nimsdai — Callie Rounds</title>
+<meta name="description" content="AI and creative systems, in exchange for a place on the mountains, starting with Manaslu this September.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@300;400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#ffffff;
+    --paper:#f7f4ee;          /* warm off-white alt panel */
+    --ink:#1b1c1e;            /* headings */
+    --text:#41423f;           /* body */
+    --text-mute:#807d75;
+    --gold:#b8975a;           /* accent: lines, icons */
+    --gold-grad:linear-gradient(115deg,#c6a25a 0%,#9a7731 48%,#bd9748 100%); /* legible gold on white */
+    --gold-light:#d0b274;     /* gold for the dark panel */
+    --gold-grad-light:linear-gradient(115deg,#e3c78c,#ffeab3 32%,#cdb276 64%,#e7cd90);
+    --dark:#1c1d1f;           /* the single dark feature panel */
+    --line:rgba(27,28,30,.12);
+    --line-gold:rgba(184,151,90,.4);
+    --font:'Hanken Grotesk',-apple-system,system-ui,sans-serif;
+    --mono:'Space Mono',monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{font-family:var(--font);font-weight:300;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;overflow-x:hidden}
+  ::selection{background:rgba(184,151,90,.25);color:var(--ink)}
+  ::-webkit-scrollbar{width:9px}
+  ::-webkit-scrollbar-track{background:#eee}
+  ::-webkit-scrollbar-thumb{background:#cdbf9f;border-radius:10px}
+  ::-webkit-scrollbar-thumb:hover{background:var(--gold)}
+
+  .section{position:relative;min-height:100vh;display:flex;align-items:center;padding:120px clamp(28px,7vw,140px);overflow:hidden}
+  .inner{position:relative;z-index:2;max-width:1080px;width:100%}
+  .narrow{max-width:730px}
+
+  .eyebrow{font-family:var(--mono);font-size:11.5px;font-weight:400;letter-spacing:3.5px;text-transform:uppercase;color:var(--gold);margin-bottom:24px;display:flex;align-items:center;gap:14px}
+  .eyebrow::before{content:"";width:34px;height:1px;background:var(--gold);opacity:.8}
+
+  h1,h2,h3{font-weight:700;line-height:1.05;letter-spacing:-.025em;color:var(--ink)}
+  .display{font-size:clamp(2.45rem,5vw,4.4rem);font-weight:800;letter-spacing:-.038em;line-height:1.02;max-width:15ch}
+  h2{font-size:clamp(1.95rem,4.2vw,3.4rem);font-weight:700;line-height:1.05}
+  .gold-text{background:var(--gold-grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
+  .lede{font-size:clamp(1.04rem,1.45vw,1.28rem);line-height:1.68;font-weight:300;color:var(--text);max-width:60ch}
+  .lede p{margin-top:1.05em}.lede p:first-child{margin-top:0}
+  .mute{color:var(--text-mute)}
+
+  .reveal{opacity:0;transform:translateY(26px);transition:opacity 1s cubic-bezier(.2,.7,.2,1),transform 1s cubic-bezier(.2,.7,.2,1)}
+  .section.in .reveal{opacity:1;transform:none}
+  .section.in .d1{transition-delay:.1s}.section.in .d2{transition-delay:.22s}.section.in .d3{transition-delay:.34s}.section.in .d4{transition-delay:.46s}
+
+  /* ---------- panels ---------- */
+  .panel{background:var(--bg)}
+  .panel.alt{background:var(--paper)}
+
+  /* ---------- photo pages ---------- */
+  .photo{color:#fff}
+  .photo h1,.photo h2,.photo h3{color:#fff}
+  .photo .lede{color:#f3f1ec;text-shadow:0 1px 16px rgba(0,0,0,.4)}
+  .photo .bg{position:absolute;inset:0;z-index:0;background-size:cover;background-position:center;transform:scale(1.06);transition:transform 1.8s ease}
+  .photo.in .bg{transform:scale(1.01)}
+  .photo .scrim{position:absolute;inset:0;z-index:1}
+  .photo.left .scrim{background:linear-gradient(100deg,rgba(14,14,16,.7) 0%,rgba(14,14,16,.42) 42%,rgba(14,14,16,.05) 78%)}
+  .photo.right{justify-content:flex-end;text-align:right}
+  .photo.right .scrim{background:linear-gradient(260deg,rgba(14,14,16,.7) 0%,rgba(14,14,16,.42) 42%,rgba(14,14,16,.05) 78%)}
+  .photo.right .eyebrow{justify-content:flex-end}.photo.right .eyebrow::before{display:none}
+  .photo.right .eyebrow::after{content:"";width:34px;height:1px;background:var(--gold-light);opacity:.85}
+  .photo.right .eyebrow{color:var(--gold-light)}
+  .photo.right .lede{margin-left:auto}
+  .photo .eyebrow{color:var(--gold-light)}
+  .photo .gold-text{background:var(--gold-grad-light);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+
+  /* ---------- hero (split) ---------- */
+  #hero{padding:0;min-height:100vh;display:grid;grid-template-columns:1.04fr .96fr;align-items:stretch}
+  #hero .pane{display:flex;flex-direction:column;justify-content:center;padding:100px clamp(34px,5.5vw,96px)}
+  #hero .photo-pane{position:relative;overflow:hidden}
+  #hero .photo-pane img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 32%}
+  #hero .chips{margin-top:32px;display:flex;flex-wrap:wrap;gap:9px}
+  .chip{font-family:var(--mono);font-size:10.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink);border:1px solid var(--line-gold);border-radius:40px;padding:8px 15px}
+  .scroll-cue{position:absolute;left:clamp(34px,5.5vw,96px);bottom:30px;z-index:3;font-family:var(--mono);font-size:10px;letter-spacing:3px;color:var(--text-mute);text-transform:uppercase;display:flex;align-items:center;gap:10px}
+  .scroll-cue span{width:42px;height:1px;background:linear-gradient(90deg,var(--gold),transparent)}
+
+  /* ---------- capability grid ---------- */
+  .caps{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;margin-top:50px;background:var(--line);border:1px solid var(--line)}
+  .cap{background:var(--bg);padding:30px 28px;transition:background .35s ease}
+  .panel.alt .caps .cap{background:var(--paper)}
+  .cap:hover{background:#fbf9f4}
+  .cap svg{width:25px;height:25px;stroke:var(--gold);stroke-width:1.5;fill:none;margin-bottom:16px}
+  .cap h3{font-size:1.12rem;font-weight:700;color:var(--ink);letter-spacing:-.02em;margin-bottom:8px}
+  .cap p{font-size:.95rem;line-height:1.55;color:var(--text-mute);font-weight:300}
+
+  /* help cards (2x2) */
+  .cards{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;margin-top:50px;background:var(--line);border:1px solid var(--line)}
+  .card{background:var(--paper);padding:36px 34px;transition:background .35s ease}
+  .card:hover{background:#fbf9f4}
+  .card .num{font-family:var(--mono);font-size:12px;color:var(--gold);letter-spacing:1px}
+  .card h3{font-size:1.26rem;font-weight:700;margin:14px 0 10px;letter-spacing:-.02em;color:var(--ink)}
+  .card p{font-size:1rem;line-height:1.6;color:var(--text-mute);font-weight:300;max-width:38ch}
+
+  /* start list (on photo) */
+  .starts{margin-top:42px;display:flex;flex-direction:column}
+  .start{display:flex;gap:28px;padding:26px 0;border-top:1px solid rgba(255,255,255,.18)}
+  .start:last-child{border-bottom:1px solid rgba(255,255,255,.18)}
+  .start .k{font-family:var(--mono);font-size:13px;color:var(--gold-light);min-width:40px;padding-top:5px}
+  .start h3{font-size:1.26rem;font-weight:700;color:#fff;margin-bottom:6px;letter-spacing:-.02em}
+  .start p{font-size:1rem;line-height:1.58;color:#e9e7e1;font-weight:300;max-width:60ch;text-shadow:0 1px 14px rgba(0,0,0,.45)}
+
+  /* coordinate strip */
+  .coords{margin-top:36px;display:inline-flex;flex-wrap:wrap;gap:14px 24px;align-items:center;font-family:var(--mono);font-size:12px;letter-spacing:1.5px;text-transform:uppercase;color:#e9e7e1;padding:15px 24px;border:1px solid rgba(255,255,255,.28);border-radius:4px;background:rgba(0,0,0,.28);backdrop-filter:blur(4px)}
+  .coords b{color:var(--gold-light);font-weight:700}
+
+  /* story split */
+  #story .grid{display:grid;grid-template-columns:1.1fr .9fr;gap:clamp(36px,5vw,80px);align-items:center}
+  #story .shot{border-radius:6px;overflow:hidden;aspect-ratio:4/5;box-shadow:0 30px 60px -30px rgba(0,0,0,.4)}
+  #story .shot img{width:100%;height:100%;object-fit:cover;object-position:50% 40%}
+  #closeshot .closeshot{display:grid;grid-template-columns:.82fr 1fr;gap:clamp(36px,5vw,60px);align-items:center}
+  #closeshot .cshot{border-radius:7px;overflow:hidden;max-width:360px;box-shadow:0 34px 64px -32px rgba(0,0,0,.45)}
+  #closeshot .cshot img{width:100%;display:block}
+  #closeshot .quote{margin-top:6px}
+  #exchange .grid{display:grid;grid-template-columns:.9fr 1.1fr;gap:clamp(32px,4.5vw,64px);align-items:center}
+  #exchange .shot{border-radius:6px;overflow:hidden;aspect-ratio:4/5;box-shadow:0 30px 60px -30px rgba(0,0,0,.4)}
+  #exchange .shot img{width:100%;height:100%;object-fit:cover;object-position:50% 42%}
+  .trade{margin-top:26px;display:flex;flex-direction:column}
+  .trade-row{display:grid;grid-template-columns:130px 1fr;gap:20px;align-items:start;padding:16px 0;border-top:1px solid var(--line)}
+  .trade-row:last-child{border-bottom:1px solid var(--line)}
+  .trade-k{font-family:var(--mono);font-size:10px;letter-spacing:1.4px;text-transform:uppercase;color:var(--gold);padding-top:3px}
+  .trade-v{font-size:1rem;line-height:1.55;color:var(--text);font-weight:300}
+  #exchange .coords{color:var(--text-mute);border-color:var(--line);background:transparent;backdrop-filter:none}
+  #exchange .coords b{color:var(--gold)}
+
+  /* lift the second-half photos so they read lighter */
+  #start .bg{filter:brightness(1.12) saturate(1.05)}
+  #exchange .bg{filter:brightness(1.2) saturate(1.06)}
+  #exchange .scrim{background:linear-gradient(260deg,rgba(14,14,16,.76) 0%,rgba(14,14,16,.4) 48%,rgba(14,14,16,.06) 86%)}
+  #exchange .lede{text-shadow:0 1px 18px rgba(0,0,0,.6)}
+
+  /* close (light, matches the rest) */
+  #close{background:var(--paper)}
+  #close::after{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;background:radial-gradient(110% 70% at 85% 0%,rgba(184,151,90,.08),transparent 55%)}
+  .quote{font-size:clamp(1.85rem,4.6vw,3.7rem);font-weight:800;letter-spacing:-.035em;line-height:1.06;max-width:20ch;color:var(--ink)}
+  .divider{height:1px;background:var(--line);margin:50px 0}
+  .cta-row{margin-top:40px;display:flex;flex-wrap:wrap;gap:16px;align-items:center}
+  .btn{display:inline-flex;align-items:center;gap:12px;font-family:var(--mono);font-size:12.5px;letter-spacing:2px;text-transform:uppercase;font-weight:700;padding:18px 32px;border-radius:4px;text-decoration:none;transition:all .3s ease}
+  .btn-gold{background:var(--gold);color:#fff}
+  .btn-gold:hover{background:#a8843f;transform:translateY(-2px)}
+  .btn-ghost{border:1px solid var(--line-gold);color:var(--ink)}
+  .btn-ghost:hover{border-color:var(--gold);color:var(--ink)}
+  .arrow{transition:transform .3s ease}.btn:hover .arrow{transform:translateX(4px)}
+  .sign{font-size:1.2rem;color:var(--text);font-weight:300;margin-top:40px}
+  .sign b{color:var(--gold);font-weight:600}
+
+  footer{background:var(--bg);text-align:center;padding:50px 28px;border-top:1px solid var(--line)}
+  footer .mark{font-family:var(--mono);letter-spacing:4px;text-transform:uppercase;font-size:12px;color:var(--gold)}
+  footer p{color:var(--text-mute);font-size:11.5px;margin-top:12px;font-family:var(--mono);letter-spacing:1px}
+
+  /* ---------- accordion (what i do) ---------- */
+  .acc{margin-top:46px;border-top:1px solid var(--line)}
+  .acc-item{border-bottom:1px solid var(--line)}
+  .acc-head{display:flex;align-items:center;gap:22px;padding:26px 6px;cursor:pointer}
+  .acc-num{font-family:var(--mono);font-size:12px;color:var(--gold);min-width:32px}
+  .acc-title{font-size:clamp(1.18rem,2.1vw,1.6rem);font-weight:700;color:var(--ink);letter-spacing:-.02em;flex:1;transition:color .25s ease}
+  .acc-head:hover .acc-title{color:var(--gold)}
+  .acc-icon{width:20px;height:20px;position:relative;flex-shrink:0}
+  .acc-icon::before,.acc-icon::after{content:"";position:absolute;background:var(--gold);transition:transform .35s ease}
+  .acc-icon::before{top:50%;left:0;width:100%;height:2px;transform:translateY(-50%)}
+  .acc-icon::after{left:50%;top:0;height:100%;width:2px;transform:translateX(-50%)}
+  .acc-item.open .acc-icon::after{transform:translateX(-50%) scaleY(0)}
+  .acc-body{max-height:0;overflow:hidden;transition:max-height .55s ease}
+  .acc-item.open .acc-body{max-height:760px}
+  .acc-body-inner{padding:2px 6px 28px 54px;font-size:1.06rem;line-height:1.62;color:var(--text-mute);font-weight:300;max-width:62ch}
+
+  /* ---- demo visuals inside drop-downs ---- */
+  .demo{padding:2px 6px 32px 54px;max-width:600px}
+  .demo-cap{font-size:1rem;line-height:1.55;color:var(--text-mute);font-weight:300;margin-bottom:18px;max-width:52ch}
+  .demo-cap b{color:var(--ink);font-weight:600}
+  .mock{background:#fff;border:1px solid var(--line);border-radius:11px;box-shadow:0 22px 48px -30px rgba(0,0,0,.4);overflow:hidden}
+  .mock-head{display:flex;align-items:center;gap:10px;padding:13px 16px;border-bottom:1px solid var(--line);font-family:var(--mono);font-size:10.5px;letter-spacing:1px;text-transform:uppercase;color:var(--text-mute)}
+  .mock-head .live{margin-left:auto;display:flex;align-items:center;gap:7px;color:var(--gold)}
+  .dot{width:8px;height:8px;border-radius:50%;background:#36b37e;flex-shrink:0;animation:pulse 2s infinite}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(54,179,126,.45)}70%{box-shadow:0 0 0 7px rgba(54,179,126,0)}100%{box-shadow:0 0 0 0 rgba(54,179,126,0)}}
+  .agent-row{display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--line)}
+  .agent-row:last-child{border-bottom:none}
+  .agent-name{font-weight:600;color:var(--ink);font-size:.96rem;min-width:150px}
+  .agent-task{font-family:var(--mono);font-size:11px;color:var(--text-mute);flex:1}
+  .agent-tag{font-family:var(--mono);font-size:9.5px;letter-spacing:.5px;text-transform:uppercase;color:var(--gold);background:rgba(184,151,90,.12);padding:4px 9px;border-radius:20px}
+  .flow{display:flex;align-items:center;flex-wrap:wrap;gap:8px}
+  .flow-step{background:#faf8f3;border:1px solid var(--line);border-radius:8px;padding:10px 13px;font-size:.88rem;color:var(--ink);font-weight:500}
+  .flow-arrow{color:var(--gold);font-family:var(--mono);font-weight:700}
+  .auto-row{display:flex;align-items:center;gap:11px;margin-top:14px;font-size:.9rem;color:var(--text-mute)}
+  .toggle{width:34px;height:19px;border-radius:20px;background:var(--gold);position:relative;flex-shrink:0}
+  .toggle::after{content:"";position:absolute;top:2px;right:2px;width:15px;height:15px;border-radius:50%;background:#fff}
+  .auto-count{margin-left:auto;font-family:var(--mono);font-size:10.5px;color:var(--gold);white-space:nowrap}
+  .chat{max-width:392px}
+  .chat-head{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--line)}
+  .chat-av{width:32px;height:32px;border-radius:50%;background:var(--gold);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px}
+  .chat-name{font-weight:600;color:var(--ink);font-size:.92rem}
+  .chat-sub{font-family:var(--mono);font-size:9.5px;color:#36b37e;letter-spacing:.5px}
+  .chat-body{padding:16px;display:flex;flex-direction:column;gap:10px;background:#faf9f6}
+  .bubble{max-width:80%;padding:10px 13px;border-radius:15px;font-size:.88rem;line-height:1.42}
+  .bubble.in{align-self:flex-start;background:#fff;border:1px solid var(--line);color:var(--ink);border-bottom-left-radius:4px}
+  .bubble.out{align-self:flex-end;background:var(--gold);color:#fff;border-bottom-right-radius:4px}
+  .bubble .t{display:block;font-family:var(--mono);font-size:8.5px;opacity:.65;margin-top:5px}
+  .browser-bar{display:flex;align-items:center;gap:7px;padding:10px 14px;border-bottom:1px solid var(--line);background:#faf9f6}
+  .tl{width:9px;height:9px;border-radius:50%}.tl.r{background:#ff5f57}.tl.y{background:#febc2e}.tl.g{background:#28c840}
+  .url{margin-left:8px;font-family:var(--mono);font-size:10px;color:var(--text-mute);background:#fff;border:1px solid var(--line);border-radius:5px;padding:4px 12px}
+  .site-nav{display:flex;align-items:center;justify-content:space-between;padding:11px 16px;background:#fff;border-bottom:1px solid var(--line)}
+  .site-logo{font-family:var(--mono);font-size:9px;letter-spacing:2.5px;color:var(--ink);font-weight:700}
+  .site-links{display:flex;gap:14px}
+  .site-links i{font-style:normal;font-size:9.5px;color:var(--text-mute);letter-spacing:.3px}
+  .browser-body{padding:26px 24px 28px;background:linear-gradient(120deg,#1b1c1e,#2c2d30);min-height:206px;display:flex;flex-direction:column;justify-content:flex-end}
+  .bb-eyebrow{font-family:var(--mono);font-size:8px;letter-spacing:2px;color:var(--gold-light);text-transform:uppercase}
+  .bb-h{color:#fff;font-weight:800;font-size:1.4rem;line-height:1.12;letter-spacing:-.02em;margin-top:7px;max-width:14ch}
+  .site-cta{align-self:flex-start;margin-top:16px;font-family:var(--mono);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:#1b1c1e;background:var(--gold-light);border-radius:30px;padding:8px 16px;font-weight:700}
+  .statgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line)}
+  .statcard{background:#fff;padding:15px 16px}
+  .stat-label{font-family:var(--mono);font-size:8.5px;letter-spacing:1px;text-transform:uppercase;color:var(--text-mute)}
+  .stat-num{font-size:1.45rem;font-weight:800;color:var(--ink);letter-spacing:-.02em;margin-top:5px}
+  .stat-num span{color:#36b37e;font-size:.7rem}
+  .bars{display:flex;align-items:flex-end;gap:6px;height:54px;padding:0 16px 16px}
+  .bar{flex:1;background:var(--gold);border-radius:3px 3px 0 0;opacity:.85}
+  .bizgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border-bottom:1px solid var(--line)}
+  .biztile{background:#fff;padding:13px 15px}
+  .biz-label{font-family:var(--mono);font-size:8.5px;letter-spacing:1px;text-transform:uppercase;color:var(--text-mute)}
+  .biz-num{font-size:1.16rem;font-weight:800;color:var(--ink);letter-spacing:-.02em;margin-top:6px}
+  .biz-num span{color:#36b37e;font-size:.64rem}
+  .biz-sub{font-family:var(--mono);font-size:8px;color:var(--gold);letter-spacing:.4px;margin-top:5px;display:block}
+  .biz-foot{display:flex;align-items:center;justify-content:space-between;padding:11px 16px 2px;font-family:var(--mono);font-size:9px;letter-spacing:.6px;text-transform:uppercase;color:var(--text-mute)}
+  .biz-foot b{color:var(--gold);font-weight:700}
+  @media(max-width:560px){.bizgrid{grid-template-columns:1fr 1fr}}
+  .clips{display:flex;gap:8px;padding:16px 16px 8px}
+  .clip{width:36px;aspect-ratio:9/16;border-radius:5px;background:linear-gradient(160deg,#3a3b3e,#1c1d1f);position:relative}
+  .clip::after{content:"";position:absolute;top:50%;left:50%;transform:translate(-40%,-50%);border-left:6px solid rgba(255,255,255,.85);border-top:4px solid transparent;border-bottom:4px solid transparent}
+  .cal{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;padding:6px 16px 16px}
+  .cal-d{aspect-ratio:1;border-radius:5px;background:#f1eee7;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:9px;color:var(--text-mute)}
+  .cal-d.post{background:var(--gold);color:#fff}
+  .posts{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;padding:14px 16px 16px}
+  .post{border:1px solid var(--line);border-radius:9px;overflow:hidden;background:#fff}
+  .post-img{aspect-ratio:4/5;background-size:cover;background-position:center;position:relative;display:flex;align-items:flex-start;padding:8px}
+  .post-type{font-family:var(--mono);font-size:7px;letter-spacing:1px;background:rgba(0,0,0,.5);color:#fff;padding:3px 7px;border-radius:20px}
+  .post-play{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.88);display:flex;align-items:center;justify-content:center;font-size:10px;color:#1c1d1f;padding-left:2px}
+  .post-meta{padding:9px 11px 11px}
+  .post-cap{font-size:.73rem;color:var(--ink);font-weight:600;line-height:1.25;display:block}
+  .post-when{font-family:var(--mono);font-size:7.5px;color:var(--gold);letter-spacing:.3px;margin-top:6px;display:block}
+  .post-when.draft{color:var(--text-mute)}
+  @media(max-width:560px){.posts{grid-template-columns:1fr 1fr}}
+  .agent-tag.wait{color:#a8761c;background:rgba(168,118,28,.12)}
+  .flow-step.you{border-color:var(--gold);color:var(--gold);font-weight:700;background:rgba(184,151,90,.08)}
+  .draft{background:#fffdf8;border:1px solid var(--line-gold);border-radius:13px;padding:13px 14px;align-self:flex-end;max-width:90%}
+  .draft-label{font-family:var(--mono);font-size:9px;letter-spacing:.6px;text-transform:uppercase;color:var(--gold);margin-bottom:7px;display:flex;align-items:center;gap:6px}
+  .draft-text{font-size:.87rem;line-height:1.42;color:var(--ink)}
+  .draft-actions{display:flex;gap:8px;margin-top:11px}
+  .btn-approve{font-family:var(--mono);font-size:9.5px;letter-spacing:.5px;text-transform:uppercase;background:var(--gold);color:#fff;padding:7px 12px;border-radius:6px;font-weight:700}
+  .btn-edit{font-family:var(--mono);font-size:9.5px;letter-spacing:.5px;text-transform:uppercase;border:1px solid var(--line);color:var(--text-mute);padding:7px 12px;border-radius:6px}
+  .stage-tabs{display:inline-flex;border:1px solid var(--line-gold);border-radius:8px;overflow:hidden;margin-bottom:16px}
+  .stage-tab{padding:8px 14px;font-family:var(--mono);font-size:9.5px;letter-spacing:.5px;text-transform:uppercase;color:var(--text-mute);cursor:pointer;background:#fff;transition:all .25s;user-select:none}
+  .stage-tab+.stage-tab{border-left:1px solid var(--line-gold)}
+  .stage-tab.active{background:var(--gold);color:#fff}
+  .stageview.s2{display:none}
+  .demo.stage2 .stageview.s1{display:none}
+  .demo.stage2 .stageview.s2{display:block}
+  .agent-tag.done{color:#36b37e;background:rgba(54,179,126,.12)}
+  .stage-note{margin-top:12px;font-family:var(--mono);font-size:10px;letter-spacing:.4px;color:var(--text-mute)}
+  .stage-note b{color:var(--gold);font-weight:700}
+  .devices{display:flex;gap:22px;align-items:center;flex-wrap:wrap;margin-top:2px}
+  .phone{width:158px;flex-shrink:0;border:7px solid #1c1d1f;border-radius:28px;background:#1c1d1f;box-shadow:0 24px 50px -28px rgba(0,0,0,.5)}
+  .phone-screen{background:#faf9f6;border-radius:21px;overflow:hidden}
+  .app-hero{background:linear-gradient(150deg,#2c2d30,#1b1c1e);padding:18px 14px 15px;display:flex;flex-direction:column;gap:7px}
+  .app-eyebrow{font-family:var(--mono);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--gold-light)}
+  .app-title{color:#fff;font-weight:800;font-size:1rem;line-height:1.1;letter-spacing:-.02em}
+  .app-card{background:#fff;margin:8px 10px 0;border:1px solid var(--line);border-radius:9px;padding:10px 11px;display:flex;flex-direction:column;gap:3px}
+  .app-card-t{font-size:.78rem;font-weight:700;color:var(--ink)}
+  .app-card-s{font-family:var(--mono);font-size:8.5px;color:var(--text-mute);letter-spacing:.3px}
+  .app-nav{display:flex;justify-content:center;gap:14px;padding:13px 0}
+  .app-nav span{width:6px;height:6px;border-radius:50%;background:var(--line)}
+  .app-nav span.on{background:var(--gold)}
+
+  @media(max-width:880px){
+    .caps{grid-template-columns:1fr 1fr}
+    #hero{grid-template-columns:1fr;min-height:auto}
+    #hero .photo-pane{height:62vh;order:-1}
+    #hero .pane{padding:64px 30px 72px}
+    #story .grid{grid-template-columns:1fr;gap:34px}
+    #story .shot{max-width:420px;aspect-ratio:4/3}
+    #closeshot .closeshot{grid-template-columns:1fr;gap:30px}
+    #closeshot .cshot{max-width:320px;margin:0 auto}
+    #exchange .grid{grid-template-columns:1fr;gap:30px}
+    #exchange .shot{max-width:360px;aspect-ratio:4/3;margin:0 auto}
+    .trade-row{grid-template-columns:1fr;gap:5px}
+  }
+  @media(max-width:560px){
+    .section{padding:92px 24px;min-height:auto}
+    .caps,.cards{grid-template-columns:1fr}
+    .photo.right{text-align:left;justify-content:flex-start}
+    .photo.right .scrim{background:linear-gradient(100deg,rgba(14,14,16,.72),rgba(14,14,16,.3) 80%)}
+    .photo.right .eyebrow{justify-content:flex-start}.photo.right .eyebrow::after{display:none}
+    .photo.right .eyebrow::before{content:"";width:34px;height:1px;background:var(--gold-light)}
+    .photo.right .lede{margin-left:0}
+    .start{flex-direction:column;gap:6px}
+    .agent-row{flex-wrap:wrap;gap:5px 10px;align-items:baseline}
+    .agent-name{min-width:0;font-size:.9rem}
+    .agent-tag{order:2;margin-left:auto}
+    .agent-task{order:3;flex:1 1 100%;margin-left:20px}
+    .biztile{padding:12px 13px}
+    .biz-num{font-size:1.05rem}
+  }
+</style>
+</head>
+<body>
+
+<!-- 1 · HERO (split, bright, photo of Callie) -->
+<section class="section in" id="hero">
+  <div class="pane">
+    <div class="eyebrow reveal">Callie Rounds &nbsp;·&nbsp; for Nims Purja</div>
+    <h1 class="display reveal d1">a proposal to multiply<br>what's <span class="gold-text">possible.</span></h1>
+    <div class="lede reveal d2" style="margin-top:24px;max-width:46ch">
+      give me a minute to walk you through it. i think there's something worth your time here <span class="gold-text">:)</span>
+    </div>
+    <div class="scroll-cue">scroll <span></span></div>
+  </div>
+  <div class="photo-pane"><img src="assets/cover-callie.jpg" alt="Callie Rounds on a Himalayan ridge"></div>
+</section>
+
+<!-- 2 · THE BRIDGE (gentle reveal) -->
+<section class="section panel alt" id="bridge">
+  <div class="inner narrow">
+    <div class="eyebrow reveal">Where this comes from</div>
+    <h2 class="reveal d1">after spending time in your world,<br>i saw a few things i think i could <span class="gold-text">help with.</span></h2>
+    <div class="lede reveal d2" style="margin-top:24px">
+      <p>being on one of your trips recently, i noticed little places where the right tools could make a real difference for what you're building.</p>
+      <p>i think there are small missing systems and tools that can help your business run smoother, give you back your time, and allow you to multiply your efforts by 10x.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 3 · WHY NOW (photo) -->
+<section class="section photo right" id="why">
+  <div class="bg" style="background-image:url('assets/machapuchare-sunrise.jpg')"></div>
+  <div class="scrim"></div>
+  <div class="inner narrow">
+    <div class="eyebrow reveal">Why now</div>
+    <h2 class="reveal d1">something just shifted,<br>and it's in your <span class="gold-text">favour.</span></h2>
+    <div class="lede reveal d2" style="margin-top:24px">
+      <p>for the first time, one person can move like a whole team. the missions that felt years away can happen in months.</p>
+      <p>your reach, your impact, everything you're building, multiplied. that's what i want to help you unlock, with the power of <span class="gold-text">AI integration.</span></p>
+    </div>
+  </div>
+</section>
+
+<!-- 4 · WHAT I DO (white panel) -->
+<section class="section panel" id="whatido">
+  <div class="inner">
+    <div class="eyebrow reveal">What i do</div>
+    <h2 class="reveal d1">i build with AI.<br>and it works while you <span class="gold-text">sleep.</span></h2>
+    <div class="lede mute reveal d2" style="margin-top:20px;max-width:54ch">a few of the things that are possible. tap any one to see what it could look like for you.</div>
+    <div class="acc reveal d2">
+
+      <div class="acc-item open"><div class="acc-head"><span class="acc-num">01</span><span class="acc-title">agents &amp; automations</span><span class="acc-icon"></span></div>
+        <div class="acc-body"><div class="demo">
+          <div class="stage-tabs"><span class="stage-tab active" data-stage="1">stage 1 · supervised</span><span class="stage-tab" data-stage="2">stage 2 · automated</span></div>
+          <div class="stageview s1">
+            <div class="demo-cap">behind the scenes, little agents and automations do the groundwork, and <b>you approve everything</b> from your phone, in a tap. they're learning how you like things done.</div>
+            <div class="mock">
+              <div class="mock-head"><span>your agents</span><span class="live"><span class="dot"></span>ready for your ok</span></div>
+              <div class="agent-row"><span class="dot"></span><span class="agent-name">Booking Concierge</span><span class="agent-task">drafted a reply to a Manaslu enquiry</span><span class="agent-tag wait">needs your ok</span></div>
+              <div class="agent-row"><span class="dot"></span><span class="agent-name">DM Responder</span><span class="agent-task">47 replies ready to send</span><span class="agent-tag wait">needs your ok</span></div>
+              <div class="agent-row"><span class="dot"></span><span class="agent-name">Content Cutter</span><span class="agent-task">cut 3 reels from the last expedition</span><span class="agent-tag wait">for review</span></div>
+              <div class="agent-row"><span class="dot"></span><span class="agent-name">Foundation Outreach</span><span class="agent-task">drafted 12 donor thank-yous</span><span class="agent-tag wait">needs your ok</span></div>
+            </div>
+          </div>
+          <div class="stageview s2">
+            <div class="demo-cap">once they've earned your trust, the routine jobs <b>run on their own</b>. only the big calls still come to you.</div>
+            <div class="mock">
+              <div class="mock-head"><span>your agents</span><span class="live"><span class="dot"></span>running on their own</span></div>
+              <div class="agent-row"><span class="dot"></span><span class="agent-name">Booking Concierge</span><span class="agent-task">replied + sent the brochure</span><span class="agent-tag done">done</span></div>
+              <div class="agent-row"><span class="dot"></span><span class="agent-name">DM Responder</span><span class="agent-task">answered 47 messages today</span><span class="agent-tag done">done</span></div>
+              <div class="agent-row"><span class="dot"></span><span class="agent-name">Content Cutter</span><span class="agent-task">cut + scheduled 3 reels</span><span class="agent-tag done">done</span></div>
+              <div class="agent-row"><span class="dot"></span><span class="agent-name">Foundation Outreach</span><span class="agent-task">a major sponsor wants to talk</span><span class="agent-tag wait">flagged for you</span></div>
+            </div>
+          </div>
+        </div></div>
+      </div>
+
+      <div class="acc-item"><div class="acc-head"><span class="acc-num">02</span><span class="acc-title">a chatbot on your site</span><span class="acc-icon"></span></div>
+        <div class="acc-body"><div class="demo">
+          <div class="demo-cap">a chatbot that lives on your site, answers visitors any hour, and points them to the right expedition. only the tricky ones come to you.</div>
+          <div class="mock chat">
+            <div class="chat-head"><span class="chat-av">N</span><div><div class="chat-name">Nimsdai</div><div class="chat-sub">AI · answering on your site</div></div></div>
+            <div class="chat-body">
+              <div class="bubble in">Hi! Is the Manaslu expedition in September still open? What's included?<span class="t">23:14</span></div>
+              <div class="bubble out">hey! yes, september's open. 35 days, fully guided, 1:1 sherpa, oxygen and permits all included. want me to send the full breakdown and hold you a spot?<span class="t">23:14</span></div>
+              <div class="bubble in">Yes please 🙏<span class="t">23:15</span></div>
+            </div>
+          </div>
+        </div></div>
+      </div>
+
+      <div class="acc-item"><div class="acc-head"><span class="acc-num">03</span><span class="acc-title">websites &amp; apps, for anything you can imagine</span><span class="acc-icon"></span></div>
+        <div class="acc-body"><div class="demo" style="max-width:700px">
+          <div class="demo-cap"><b>upscaling your website has never been easier.</b> and if there's an app you can see being valuable, that can be built too.</div>
+          <div class="devices">
+            <div class="mock" style="flex:1;min-width:300px">
+              <div class="browser-bar"><span class="tl r"></span><span class="tl y"></span><span class="tl g"></span><span class="url">nimsdai.com</span></div>
+              <div class="site-nav"><span class="site-logo">NIMSDAI</span><span class="site-links"><i>Expeditions</i><i>Foundation</i><i>Store</i></span></div>
+              <div class="browser-body"><span class="bb-eyebrow">Achieve your new possible</span><span class="bb-h">The next expedition starts here.</span><span class="site-cta">Plan your climb →</span></div>
+            </div>
+            <div class="phone">
+              <div class="phone-screen">
+                <div class="app-hero"><span class="app-eyebrow">Nimsdai</span><span class="app-title">your next<br>summit awaits</span></div>
+                <div class="app-card"><span class="app-card-t">Manaslu · September</span><span class="app-card-s">35 days · spots open</span></div>
+                <div class="app-card"><span class="app-card-t">Train with Nims</span><span class="app-card-s">today's session</span></div>
+                <div class="app-card"><span class="app-card-t">The Foundation</span><span class="app-card-s">see your impact</span></div>
+                <div class="app-nav"><span></span><span class="on"></span><span></span><span></span></div>
+              </div>
+            </div>
+          </div>
+        </div></div>
+      </div>
+
+      <div class="acc-item"><div class="acc-head"><span class="acc-num">04</span><span class="acc-title">one dashboard to run everything</span><span class="acc-icon"></span></div>
+        <div class="acc-body"><div class="demo">
+          <div class="demo-cap">one dashboard to manage every aspect of the business, every branch tied together in one place, always live.</div>
+          <div class="mock">
+            <div class="mock-head"><span>Nimsdai · everything, live</span><span class="live"><span class="dot"></span>all branches</span></div>
+            <div class="bizgrid">
+              <div class="biztile"><div class="biz-label">Expeditions</div><div class="biz-num">12 <span>↑</span></div><span class="biz-sub">Manaslu · autumn</span></div>
+              <div class="biztile"><div class="biz-label">Skydive Nimsdai</div><div class="biz-num">3 events</div><span class="biz-sub">next boogie · 8 spots</span></div>
+              <div class="biztile"><div class="biz-label">The Foundation</div><div class="biz-num">£42k</div><span class="biz-sub">raised this season</span></div>
+              <div class="biztile"><div class="biz-label">The Store</div><div class="biz-num">£182k</div><span class="biz-sub">last 30 days</span></div>
+              <div class="biztile"><div class="biz-label">Speaking &amp; film</div><div class="biz-num">6 booked</div><span class="biz-sub">talks + premieres</span></div>
+              <div class="biztile"><div class="biz-label">Social</div><div class="biz-num">2.2M <span>↑</span></div><span class="biz-sub">across platforms</span></div>
+            </div>
+            <div class="biz-foot"><span>combined, this year</span><b>everything in one place</b></div>
+            <div class="bars"><span class="bar" style="height:38%"></span><span class="bar" style="height:54%"></span><span class="bar" style="height:46%"></span><span class="bar" style="height:70%"></span><span class="bar" style="height:60%"></span><span class="bar" style="height:88%"></span><span class="bar" style="height:96%"></span></div>
+          </div>
+        </div></div>
+      </div>
+
+      <div class="acc-item"><div class="acc-head"><span class="acc-num">05</span><span class="acc-title">tools for your content</span><span class="acc-icon"></span></div>
+        <div class="acc-body"><div class="demo">
+          <div class="demo-cap">tools that make content easier for your team. planning, scheduling, quick edits, design, whatever takes the weight off. what goes out is always your call.</div>
+          <div class="mock">
+            <div class="mock-head"><span>Content planner</span><span class="live"><span class="dot"></span>you approve what goes out</span></div>
+            <div class="posts">
+              <div class="post"><div class="post-img" style="background-image:url('assets/content-2.jpg')"><span class="post-type">REEL</span><span class="post-play">▶</span></div><div class="post-meta"><span class="post-cap">the summit push</span><span class="post-when">Tue 9:00 · scheduled</span></div></div>
+              <div class="post"><div class="post-img" style="background-image:url('assets/content-1.jpg')"><span class="post-type">POST</span></div><div class="post-meta"><span class="post-cap">the approach</span><span class="post-when draft">draft · your edit</span></div></div>
+              <div class="post"><div class="post-img" style="background-image:url('assets/content-3.jpg')"><span class="post-type">REEL</span><span class="post-play">▶</span></div><div class="post-meta"><span class="post-cap">why we climb</span><span class="post-when">Sat 18:00 · scheduled</span></div></div>
+            </div>
+          </div>
+        </div></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- 5 · MY STORY (white panel, split with Callie photo) -->
+<section class="section panel" id="story">
+  <div class="inner">
+    <div class="grid">
+      <div>
+        <div class="eyebrow reveal">A little about me</div>
+        <h2 class="reveal d1">why this matters <span class="gold-text">to me.</span></h2>
+        <div class="lede reveal d2" style="margin-top:24px">
+          <p>i've always believed i can achieve anything i set my mind to. it's how i've built everything i have.</p>
+          <p>i dropped out of high school and left home at 16, and i've been travelling the world full time ever since. i built a life i love by chasing the hard things on purpose, because i know discomfort is what shapes me.</p>
+          <p>so the mountains made sense. when i climbed lobuche east recently, something shifted in me, and my mind is now set on bigger ones. i believe they have a lot to teach me, and i'm ready to learn from them.</p>
+        </div>
+      </div>
+      <div class="shot reveal d2"><img src="assets/story-final.jpg" alt="Callie on a Himalayan summit at sunrise"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 6 · THE EXCHANGE (merged: the trade, split with Manaslu photo) -->
+<section class="section panel" id="exchange">
+  <div class="inner">
+    <div class="grid">
+      <div class="shot reveal"><img src="assets/annapurna-sunrise.jpg" alt="Annapurna at sunrise"></div>
+      <div>
+        <div class="eyebrow reveal">The exchange</div>
+        <h2 class="reveal d1">i'm not looking for a job.<br>i'm looking for a <span class="gold-text">trade.</span></h2>
+        <div class="lede reveal d2" style="margin-top:18px">i'm not after a paycheck. i'm after the mountains.</div>
+        <div class="trade reveal d2">
+          <div class="trade-row"><div class="trade-k">what i bring</div><div class="trade-v">i join your team and build whatever you find most valuable. whether that be agents like you saw above, dashboards, websites and apps, content tools, or something else entirely.</div></div>
+          <div class="trade-row"><div class="trade-k">what i'm asking for</div><div class="trade-v">a place on your expeditions, starting with manaslu this september.</div></div>
+        </div>
+        <div class="lede reveal d3" style="margin-top:22px">think of me as a multiplier on whatever you're building. point me at any idea, big or small, and i help make more of it possible.</div>
+        <div class="coords reveal d3"><span>Manaslu</span><b>8,163 m</b><span>Autumn</span><b>September</b></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 8 · GUARANTEE + CALL (the single dark feature panel) -->
+<section class="section" id="close">
+  <div class="inner narrow">
+    <div class="eyebrow reveal">My guarantee</div>
+    <h2 class="quote reveal d1">if the work isn't worth it,<br><span class="gold-text">you don't take me up.</span></h2>
+    <div class="lede reveal d2" style="margin-top:22px">that's how strongly i believe in what i can add. no risk on your side. i prove it first.</div>
+    <div class="divider reveal d2"></div>
+    <div class="lede reveal d3">      <p>if this resonates, i'd love to talk. with you, or whoever on your team is the right fit.</p>
+    </div>
+    <div class="sign reveal d3"><b>callie</b> <span class="gold-text">:)</span></div>
+    <a class="sign reveal d4" href="https://instagram.com/callie.rounds" target="_blank" rel="noopener" style="display:inline-block;margin-top:14px;font-family:var(--mono);font-size:13px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);text-decoration:underline;text-underline-offset:5px;text-decoration-thickness:1px;font-weight:400">@callie.rounds</a>
+  </div>
+</section>
+
+<!-- CLOSE · photo capstone -->
+<section class="section panel" id="closeshot">
+  <div class="inner">
+    <div class="closeshot reveal">
+      <div class="cshot"><img src="assets/close-store.jpg" alt="Callie and Nims in the Nimsdai store"></div>
+      <div class="ccap">
+        <div class="eyebrow">Callie Rounds × Nimsdai</div>
+        <h2 class="quote">achieve your <span class="gold-text">new possible.</span></h2>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="mark">a proposal for Nims Purja</div>
+  <p>June 2026</p>
+</footer>
+
+<script>
+  const io=new IntersectionObserver((e)=>{e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('in')})},{threshold:.14});
+  document.querySelectorAll('.section').forEach(s=>io.observe(s));
+  document.querySelectorAll('.acc-head').forEach(h=>h.addEventListener('click',()=>h.parentElement.classList.toggle('open')));
+  document.querySelectorAll('.stage-tab').forEach(t=>t.addEventListener('click',(e)=>{
+    e.stopPropagation();
+    const demo=t.closest('.demo');
+    demo.classList.toggle('stage2', t.dataset.stage==='2');
+    demo.querySelectorAll('.stage-tab').forEach(x=>x.classList.toggle('active', x===t));
+  }));
+</script>
+</body>
+</html>
